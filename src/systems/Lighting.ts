@@ -1,48 +1,50 @@
 import * as THREE from 'three';
 
-const SUN_DAY   = new THREE.Color(0xfff8e8);
-const SUN_DAWN  = new THREE.Color(0xff8833);
-const AMB_DAY   = new THREE.Color(0x6688aa);
-const AMB_NIGHT = new THREE.Color(0x223355);
+const SUN_WHITE  = new THREE.Color(0xfff8e8);
+const SUN_ORANGE = new THREE.Color(0xff7722);
+const AMB_DAY    = new THREE.Color(0x6688aa);
+const AMB_NIGHT  = new THREE.Color(0x151d2e);
 
 export class Lighting {
   private readonly sun: THREE.DirectionalLight;
   private readonly ambient: THREE.AmbientLight;
+  private _dayness = 0;
 
   constructor(scene: THREE.Scene) {
-    // Sun starts overhead; update() repositions it every frame
-    this.sun = new THREE.DirectionalLight(SUN_DAY, 2.0);
+    this.sun = new THREE.DirectionalLight(SUN_WHITE, 2.0);
     scene.add(this.sun);
-
-    // AmbientLight stays high so night scenes remain visible
+    // Stays elevated at night so the scene remains visible
     this.ambient = new THREE.AmbientLight(AMB_DAY, 0.7);
     scene.add(this.ambient);
   }
 
-  update(): void {
+  update = (): void => {
     const now = new Date();
-    // fractDay: 0.0 = midnight, 0.25 = 6am, 0.5 = noon, 0.75 = 6pm
+    // fractDay: 0 = midnight, 0.25 = 6 am, 0.5 = noon, 0.75 = 6 pm
     const fractDay =
       (now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()) / 86400;
 
-    // Elevation peaks at noon, zero at 6am/6pm, negative at night
-    const angle = (fractDay - 0.25) * Math.PI * 2; // 0 at 6am
-    const elevation = Math.sin(angle * 0.5);        // -1..1
-    const dayness   = Math.max(0, elevation);        // 0 at night, 1 at noon
+    // Elevation: +1 at noon, 0 at 6am/6pm, −1 at midnight
+    const angle     = (fractDay - 0.25) * Math.PI * 2;
+    const elevation = Math.sin(angle * 0.5);
+    this._dayness   = Math.max(0, elevation);
 
-    // Sun orbits in the YZ plane; stay at min height 8 to avoid harsh underlighting
+    // Sun orbits in the YZ plane; never dips below y=6 to avoid uplighting
     this.sun.position.set(
-      Math.sin(fractDay * Math.PI * 2) * 80,
-      Math.max(8, elevation * 300),
+      Math.sin(fractDay * Math.PI * 2) * 60,
+      Math.max(6, elevation * 300),
       -Math.cos(angle * 0.5) * 200,
     );
-    this.sun.intensity = 0.4 + dayness * 2.2;
+    this.sun.intensity = 0.3 + this._dayness * 2.4;
 
-    // Orange tint near horizon (elevation ≈ 0), white at noon
-    const dawnness = Math.max(0, 1 - Math.abs(elevation) * 5);
-    this.sun.color.copy(SUN_DAY).lerp(SUN_DAWN, dawnness);
+    // Orange near horizon (|elevation| ≈ 0), white at noon
+    const dawnness = Math.max(0, 1 - Math.abs(elevation) * 4.5);
+    this.sun.color.copy(SUN_WHITE).lerp(SUN_ORANGE, dawnness);
 
-    this.ambient.color.copy(AMB_NIGHT).lerp(AMB_DAY, dayness);
-    this.ambient.intensity = 0.55 + dayness * 0.35;
-  }
+    // Ambient: cold navy at night, warm blue-grey by day; kept ≥ 0.55 for visibility
+    this.ambient.color.copy(AMB_NIGHT).lerp(AMB_DAY, this._dayness);
+    this.ambient.intensity = 0.55 + this._dayness * 0.35;
+  };
+
+  get dayness(): number { return this._dayness; }
 }

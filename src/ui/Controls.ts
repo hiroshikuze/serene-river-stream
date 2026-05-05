@@ -1,11 +1,11 @@
 import type { Audio } from '../systems/Audio';
 
 const BIOME_LABELS: Record<string, string> = {
-  mountain: 'MOUNTAIN SOURCE',
-  forest:   'FOREST',
-  valley:   'VALLEY',
-  plains:   'PLAINS',
-  sea:      'OPEN SEA',
+  mountain: '山奥 / MOUNTAIN',
+  forest:   '森 / FOREST',
+  village:  '村 / VILLAGE',
+  delta:    '河口 / DELTA',
+  sea:      '海 / SEA',
 };
 
 export class Controls {
@@ -26,22 +26,18 @@ export class Controls {
       this.soundBtn.classList.toggle('off', !on);
     });
 
-    setInterval(() => this.tickClock(), 1000);
+    setInterval(() => { this.tickClock(); }, 1000);
     this.tickClock();
   }
 
-  updateJourney(minutes: number, biomeName: string): void {
-    if (minutes >= 60) {
-      this.journeyEl.textContent = 'JOURNEY COMPLETE';
-      return;
-    }
+  updateJourney = (minutes: number, biomeName: string): void => {
     const label = BIOME_LABELS[biomeName] ?? biomeName.toUpperCase();
-    const pct   = Math.round((minutes / 60) * 100);
+    const pct   = Math.min(100, Math.round((minutes / 60) * 100));
     this.journeyEl.textContent = `${label}  ${pct}%`;
-  }
+  };
 
-  private tickClock(): void {
+  private tickClock = (): void => {
     if (!this.clockOn) return;
     this.clockEl.textContent = new Date().toLocaleTimeString('ja-JP', { hour12: false });
-  }
+  };
 }
