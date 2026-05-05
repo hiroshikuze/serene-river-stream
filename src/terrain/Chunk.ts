@@ -13,8 +13,9 @@ export class Chunk {
     biome: Biome,
     rng: () => number,
     scene: THREE.Scene,
+    offsetX = 0,
   ) {
-    this.group.position.z = -(index * CHUNK_LENGTH + CHUNK_LENGTH / 2);
+    this.group.position.set(offsetX, 0, -(index * CHUNK_LENGTH + CHUNK_LENGTH / 2));
     this.addRiver(biome);
     this.addBank('left', biome, rng);
     this.addBank('right', biome, rng);

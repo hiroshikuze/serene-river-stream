@@ -7,12 +7,16 @@ import { Controls } from './ui/Controls';
 import { CloudManager } from './sky/CloudManager';
 import { getSeason, SEASON_SKY } from './sky/season';
 import { fbmCentered } from './utils/noise';
+import { meanderX } from './utils/meander';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 const SPEED              = 10;
 const CAM_PITCH          = -0.06;
 const NIGHT_FOG          = new THREE.Color(0x0a0d1a);
 const WHITEOUT_START_SEC = 59 * 60;
+const YAW_LAG            = 0.028; // exponential smoothing per frame (~1s delay at 60fps)
+
+let cameraYaw = 0;
 
 // ─── Clock-sync journey ──────────────────────────────────────────────────────
 const journeyElapsed = (): number => {
@@ -60,8 +64,17 @@ const frame = (): void => {
   // Camera
   camera.position.z = -elapsed * SPEED;
   camera.position.y = biome.cameraHeight + fbmCentered(elapsed * 0.18) * 0.20;
-  camera.rotation.x = CAM_PITCH          + fbmCentered(elapsed * 0.12) * 0.015;
-  camera.rotation.z =                      fbmCentered(elapsed * 0.07) * 0.025;
+
+  // Meander: camera X follows river centre; yaw tracks bend direction with lag
+  const xNow        = meanderX(camera.position.z);
+  const xAhead      = meanderX(camera.position.z - 20);
+  const targetYaw   = Math.atan2(xAhead - xNow, 20) * 0.55;
+  cameraYaw        += (targetYaw - cameraYaw) * YAW_LAG;
+  camera.position.x = xNow;
+  camera.rotation.y = cameraYaw;
+
+  camera.rotation.x = CAM_PITCH + fbmCentered(elapsed * 0.12) * 0.015;
+  camera.rotation.z =             fbmCentered(elapsed * 0.07) * 0.025;
 
   // Terrain + clouds (each throttled to 1 spawn/frame)
   chunks.update(camera.position.z, scene);

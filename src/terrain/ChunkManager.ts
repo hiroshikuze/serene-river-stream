@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { Chunk, CHUNK_LENGTH } from './Chunk';
 import { getBiome } from './biomes';
 import { createRng } from '../utils/rng';
+import { meanderX } from '../utils/meander';
 
 const SPEED         = 10;          // must match main.ts
 const CHUNKS_AHEAD  = 6;
@@ -21,9 +22,10 @@ export class ChunkManager {
     for (let i = lo; i <= hi; i++) {
       if (!this.active.has(i)) {
         if (spawned >= 1) continue;
-        const minutes = (i * CHUNK_LENGTH / SPEED) / 60;
-        const rng     = createRng(SEED_BASE ^ (i * 0x9e3779b9));
-        this.active.set(i, new Chunk(i, getBiome(minutes), rng, scene));
+        const minutes     = (i * CHUNK_LENGTH / SPEED) / 60;
+        const rng         = createRng(SEED_BASE ^ (i * 0x9e3779b9));
+        const chunkCenterZ = -(i * CHUNK_LENGTH + CHUNK_LENGTH / 2);
+        this.active.set(i, new Chunk(i, getBiome(minutes), rng, scene, meanderX(chunkCenterZ)));
         spawned++;
       }
     }
