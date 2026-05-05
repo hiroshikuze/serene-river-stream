@@ -32,6 +32,12 @@ Read `.claude/revision_log.md` before starting any work to internalize past mist
 - Is the issue a bug? → Investigate and fix autonomously first.
 - Does the fix require a design decision (changes public API, affects multiple systems)? → Stop and confirm before proceeding.
 
+### 7. Docs → Tests → Code
+- Is this an implementation task? → Use TodoWrite to list all steps before touching any code.
+- The required order is: **1) Docs** (finalize the spec first) → **2) Tests** (if tests are not needed, state so explicitly) → **3) Code**.
+- Has Principle 1 (Plan approval) been completed before calling TodoWrite? → If not, complete it first. The full flow is: **Plan → Docs → Tests → Code**.
+- Is the first TodoWrite item something other than a docs update? → Do not proceed. "It's a small change" and "it's just one line" are not exceptions.
+
 ## Project Status
 
 This repository is in early setup — no source code, build tooling, or tests exist yet. The `.gitignore` is configured for a Node.js project (npm, yarn, pnpm, Next.js, Nuxt, SvelteKit, Vite, etc.).
