@@ -1,11 +1,15 @@
 import * as THREE from 'three';
 import type { Biome } from './biomes';
+import { meanderX, meanderRight } from '../utils/meander';
 
 export const CHUNK_LENGTH = 200;
-const BANK_WIDTH = 90;
+const BANK_WIDTH  = 90;
+const N_SECTIONS  = 16;  // cross-sections per chunk (~12.5u spacing)
+const RIVER_SEGS  = 3;   // lateral segments across river width
+const BANK_SEGS   = 5;   // lateral segments across bank width
 
 export class Chunk {
-  private readonly group = new THREE.Group();
+  private readonly group  = new THREE.Group();
   private readonly meshes: THREE.Mesh[] = [];
 
   constructor(
@@ -13,49 +17,81 @@ export class Chunk {
     biome: Biome,
     rng: () => number,
     scene: THREE.Scene,
-    offsetX = 0,
   ) {
-    this.group.position.set(offsetX, 0, -(index * CHUNK_LENGTH + CHUNK_LENGTH / 2));
-    this.addRiver(biome);
-    this.addBank('left', biome, rng);
+    this.addRiver(biome, rng);
+    this.addBank('left',  biome, rng);
     this.addBank('right', biome, rng);
     scene.add(this.group);
   }
 
-  // PlaneGeometry in XY, rotated to lie flat in XZ; tiny Y wobble for lit-water facets
-  private addRiver = (biome: Biome): void => {
-    const geo = new THREE.PlaneGeometry(biome.riverWidth, CHUNK_LENGTH, 3, 8);
-    geo.rotateX(-Math.PI / 2);
-    const pos = geo.attributes['position'] as THREE.BufferAttribute;
-    for (let i = 0; i < pos.count; i++) {
-      pos.setY(i, pos.getY(i) - 0.15 - Math.random() * 0.1);
+  private addRiver = (biome: Biome, rng: () => number): void => {
+    const halfW      = biome.riverWidth / 2;
+    const pos: number[] = [];
+    const idx: number[] = [];
+
+    for (let s = 0; s <= N_SECTIONS; s++) {
+      const z        = -(this.index * CHUNK_LENGTH + (s / N_SECTIONS) * CHUNK_LENGTH);
+      const cx       = meanderX(z);
+      const [rx, rz] = meanderRight(z);
+      for (let v = 0; v <= RIVER_SEGS; v++) {
+        const u      = v / RIVER_SEGS - 0.5;   // −0.5 .. +0.5
+        const offset = u * 2 * halfW;
+        pos.push(cx + offset * rx, -0.15 - rng() * 0.1, z + offset * rz);
+      }
     }
-    geo.computeVertexNormals();
-    this.push(geo, new THREE.MeshPhongMaterial({ color: biome.riverColor, flatShading: true }));
+
+    const row = RIVER_SEGS + 1;
+    for (let s = 0; s < N_SECTIONS; s++) {
+      for (let v = 0; v < RIVER_SEGS; v++) {
+        const a = s * row + v, b = a + 1, c = a + row, d = c + 1;
+        idx.push(a, b, c, b, d, c);
+      }
+    }
+    this.push(pos, idx, biome.riverColor);
   };
 
-  // After rotateX(-PI/2): getX is lateral (−BW/2..+BW/2), getY is height (starts 0)
   private addBank = (side: 'left' | 'right', biome: Biome, rng: () => number): void => {
-    const geo = new THREE.PlaneGeometry(BANK_WIDTH, CHUNK_LENGTH, 5, 8);
-    geo.rotateX(-Math.PI / 2);
-    const pos = geo.attributes['position'] as THREE.BufferAttribute;
-    for (let i = 0; i < pos.count; i++) {
-      const x = pos.getX(i);
-      // t = 0 at river edge, 1 at outer edge
-      const t      = side === 'left'
-        ? (-x + BANK_WIDTH / 2) / BANK_WIDTH
-        : (x  + BANK_WIDTH / 2) / BANK_WIDTH;
-      const height = t * biome.bankHeight + (rng() * 2 - 1) * biome.bankHeight * 0.28 * t;
-      pos.setY(i, Math.max(0, height));
+    const halfRiver  = biome.riverWidth / 2;
+    const sign       = side === 'left' ? -1 : 1;
+    const pos: number[] = [];
+    const idx: number[] = [];
+
+    for (let s = 0; s <= N_SECTIONS; s++) {
+      const z        = -(this.index * CHUNK_LENGTH + (s / N_SECTIONS) * CHUNK_LENGTH);
+      const cx       = meanderX(z);
+      const [rx, rz] = meanderRight(z);
+      for (let v = 0; v <= BANK_SEGS; v++) {
+        const t      = v / BANK_SEGS;                    // 0 = river edge, 1 = outer
+        const offset = halfRiver + t * BANK_WIDTH;
+        const height = t * biome.bankHeight + (rng() * 2 - 1) * biome.bankHeight * 0.28 * t;
+        pos.push(
+          cx + sign * offset * rx,
+          Math.max(0, height),
+          z  + sign * offset * rz,
+        );
+      }
     }
-    geo.computeVertexNormals();
-    const xSign = side === 'left' ? -1 : 1;
-    geo.translate(xSign * (biome.riverWidth / 2 + BANK_WIDTH / 2), 0, 0);
-    this.push(geo, new THREE.MeshPhongMaterial({ color: biome.bankColor, flatShading: true }));
+
+    const row = BANK_SEGS + 1;
+    for (let s = 0; s < N_SECTIONS; s++) {
+      for (let v = 0; v < BANK_SEGS; v++) {
+        const a = s * row + v, b = a + 1, c = a + row, d = c + 1;
+        if (side === 'left') {
+          idx.push(a, c, b, b, c, d);
+        } else {
+          idx.push(a, b, c, b, d, c);
+        }
+      }
+    }
+    this.push(pos, idx, biome.bankColor);
   };
 
-  private push = (geo: THREE.BufferGeometry, mat: THREE.Material): void => {
-    const mesh = new THREE.Mesh(geo, mat);
+  private push = (positions: number[], indices: number[], color: number): void => {
+    const geo  = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geo.setIndex(indices);
+    geo.computeVertexNormals();
+    const mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ color, flatShading: true }));
     this.group.add(mesh);
     this.meshes.push(mesh);
   };

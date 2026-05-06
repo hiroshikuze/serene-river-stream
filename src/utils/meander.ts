@@ -14,3 +14,16 @@ export const meanderX = (z: number): number => {
   const freq    = 0.008 * (1 - t) + 0.0025;     // short bends → long bends
   return (fbm(-z * freq + 50.0) - 0.5) * 2.0 * amp;
 };
+
+/**
+ * Returns the right-perpendicular direction [rx, rz] in the XZ plane at world-Z z.
+ * "Right" is defined looking downstream (toward −Z).
+ * Derived by numerically differentiating meanderX and rotating 90° CW.
+ */
+export const meanderRight = (z: number): [number, number] => {
+  const δ   = 2.0;
+  const dx  = meanderX(z + δ) - meanderX(z - δ);
+  const dz  = 2.0 * δ;
+  const len = Math.sqrt(dx * dx + dz * dz);
+  return [dz / len, -dx / len];
+};
