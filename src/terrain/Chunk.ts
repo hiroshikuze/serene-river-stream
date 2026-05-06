@@ -36,7 +36,7 @@ export class Chunk {
       for (let v = 0; v <= RIVER_SEGS; v++) {
         const u      = v / RIVER_SEGS - 0.5;   // −0.5 .. +0.5
         const offset = u * 2 * halfW;
-        pos.push(cx + offset * rx, -0.15 - rng() * 0.1, z + offset * rz);
+        pos.push(cx + offset * rx, -0.3 - rng() * 0.5, z + offset * rz);
       }
     }
 
@@ -47,7 +47,7 @@ export class Chunk {
         idx.push(a, b, c, b, d, c);
       }
     }
-    this.push(pos, idx, biome.riverColor);
+    this.pushWater(pos, idx, biome.riverColor);
   };
 
   private addBank = (side: 'left' | 'right', biome: Biome, rng: () => number): void => {
@@ -92,6 +92,22 @@ export class Chunk {
     geo.setIndex(indices);
     geo.computeVertexNormals();
     const mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ color, flatShading: true }));
+    this.group.add(mesh);
+    this.meshes.push(mesh);
+  };
+
+  private pushWater = (positions: number[], indices: number[], color: number): void => {
+    const geo  = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geo.setIndex(indices);
+    geo.computeVertexNormals();
+    const mat  = new THREE.MeshPhongMaterial({
+      color,
+      flatShading: true,
+      specular: new THREE.Color(0x99bbcc),
+      shininess: 90,
+    });
+    const mesh = new THREE.Mesh(geo, mat);
     this.group.add(mesh);
     this.meshes.push(mesh);
   };

@@ -15,8 +15,10 @@ const CAM_PITCH          = -0.06;
 const NIGHT_FOG          = new THREE.Color(0x0a0d1a);
 const WHITEOUT_START_SEC = 59 * 60;
 const YAW_LAG            = 0.028; // exponential smoothing per frame (~1s delay at 60fps)
+const X_LAG              = 0.03;  // camera X lags river centre so bends are visible
 
 let cameraYaw = 0;
+let camX      = 0;
 
 // ─── Clock-sync journey ──────────────────────────────────────────────────────
 const journeyElapsed = (): number => {
@@ -65,12 +67,13 @@ const frame = (): void => {
   camera.position.z = -elapsed * SPEED;
   camera.position.y = biome.cameraHeight + fbmCentered(elapsed * 0.18) * 0.20;
 
-  // Meander: camera X follows river centre; yaw tracks bend direction with lag
+  // Meander: camera X lags behind river centre; yaw tracks bend direction with lag
   const xNow        = meanderX(camera.position.z);
   const xAhead      = meanderX(camera.position.z - 20);
   const targetYaw   = Math.atan2(xAhead - xNow, 20) * 0.55;
   cameraYaw        += (targetYaw - cameraYaw) * YAW_LAG;
-  camera.position.x = xNow;
+  camX             += (xNow - camX) * X_LAG;
+  camera.position.x = camX;
   camera.rotation.y = cameraYaw;
 
   camera.rotation.x = CAM_PITCH + fbmCentered(elapsed * 0.12) * 0.015;
