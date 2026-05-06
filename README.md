@@ -3,14 +3,14 @@
 A 1-hour ambient 3D river journey — ride from mountain headwaters to the open sea, synchronized with your real wall-clock.
 Built with Vanilla TypeScript + Three.js + Vite.
 
-[![GitHub Stars](https://img.shields.io/github/stars/hiroshikuze/newapp2026-river-rafting?style=for-the-badge&logo=github&logoColor=white&color=gold&label=⭐%20Stars)](https://github.com/hiroshikuze/newapp2026-river-rafting/stargazers)
+[![GitHub Stars](https://img.shields.io/github/stars/hiroshikuze/serene-river-stream?style=for-the-badge&logo=github&logoColor=white&color=gold&label=⭐%20Stars)](https://github.com/hiroshikuze/serene-river-stream/stargazers)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
 ---
 
 ## Demo
 
-**[▶ Open Serene River Stream](https://hiroshikuze.github.io/newapp2026-river-rafting/)**
+**[▶ Open Serene River Stream](https://hiroshikuze.github.io/serene-river-stream/)**
 
 ---
 
@@ -38,10 +38,10 @@ Built with Vanilla TypeScript + Three.js + Vite.
 ## Local Setup
 
 ```bash
-git clone https://github.com/hiroshikuze/newapp2026-river-rafting.git
-cd newapp2026-river-rafting
+git clone https://github.com/hiroshikuze/serene-river-stream.git
+cd serene-river-stream
 npm install
-npm run dev        # http://localhost:5173/newapp2026-river-rafting/
+npm run dev        # http://localhost:5173/serene-river-stream/
 ```
 
 Other commands:
@@ -57,7 +57,7 @@ npm run typecheck  # tsc --noEmit
 ## Tech Stack
 
 | Layer | Library / Tool |
-|-------|---------------|
+| --- | --- |
 | 3D rendering | [Three.js](https://threejs.org/) v0.170 |
 | Language | TypeScript 5 (strict) |
 | Bundler | Vite 6 |

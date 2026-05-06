@@ -4,7 +4,7 @@ This file tracks recurring mistake patterns. Read this at the start of every ses
 
 ## Format
 
-```
+```text
 ## YYYY-MM-DD — <short title>
 - Pattern: <what went wrong>
 - Trigger: <what situation causes this>
