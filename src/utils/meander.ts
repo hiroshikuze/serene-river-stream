@@ -12,7 +12,10 @@ export const meanderX = (z: number): number => {
   const t       = minutes / 60;                  // 0 = mountain, 1 = sea
   const amp     = 39 * (1 - t) + 1;             // 39u → 1u
   const freq    = 0.008 * (1 - t) + 0.0025;     // short bends → long bends
-  return (fbm(-z * freq + 50.0) - 0.5) * 2.0 * amp;
+  // Secondary layer at 2.7× frequency prevents long straight sections
+  const primary = (fbm(-z * freq        + 50.0) - 0.5) * 2.0 * amp;
+  const detail  = (fbm(-z * freq * 2.7  + 30.0) - 0.5) * 2.0 * amp * 0.30;
+  return primary + detail;
 };
 
 /**
