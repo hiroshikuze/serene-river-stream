@@ -8,6 +8,7 @@ import { CloudManager } from './sky/CloudManager';
 import { getSeason, SEASON_SKY } from './sky/season';
 import { fbmCentered } from './utils/noise';
 import { meanderX } from './utils/meander';
+import { tickWater } from './terrain/waterMaterial';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 const SPEED              = 10;
@@ -82,6 +83,7 @@ const frame = (): void => {
   // Terrain + clouds (each throttled to 1 spawn/frame)
   chunks.update(camera.position.z, scene);
   cloudMgr.update(camera.position.z, scene);
+  tickWater(elapsed);
 
   // Lighting
   lighting.update();
