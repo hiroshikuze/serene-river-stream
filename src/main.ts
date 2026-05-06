@@ -4,6 +4,7 @@ import { getBiome, getBiomeName } from './terrain/biomes';
 import { Lighting } from './systems/Lighting';
 import { Audio } from './systems/Audio';
 import { Controls } from './ui/Controls';
+import { WhatsNew } from './ui/WhatsNew';
 import { CloudManager } from './sky/CloudManager';
 import { getSeason, SEASON_SKY } from './sky/season';
 import { fbmCentered } from './utils/noise';
@@ -45,7 +46,11 @@ const cloudMgr   = new CloudManager();
 const lighting   = new Lighting(scene);
 const audio      = new Audio();
 const controls   = new Controls(audio);
+new WhatsNew();
 const whiteoutEl = document.getElementById('whiteout') as HTMLDivElement;
+
+// Reload when the browser comes back online (e.g. after network disconnect)
+window.addEventListener('online', () => location.reload());
 
 // ─── Resize ──────────────────────────────────────────────────────────────────
 window.addEventListener('resize', () => {

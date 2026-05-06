@@ -1,57 +1,84 @@
-# Infinite River Journey
+# Serene River Stream
 
-A 3D first-person boat ride from mountain headwaters to the sea, lasting exactly one hour.
-Built with Vanilla TypeScript + Three.js + Vite. Deployable to GitHub Pages.
+A 1-hour ambient 3D river journey — ride from mountain headwaters to the open sea, synchronized with your real wall-clock.
+Built with Vanilla TypeScript + Three.js + Vite.
 
 [![GitHub Stars](https://img.shields.io/github/stars/hiroshikuze/newapp2026-river-rafting?style=for-the-badge&logo=github&logoColor=white&color=gold&label=⭐%20Stars)](https://github.com/hiroshikuze/newapp2026-river-rafting/stargazers)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
-## Visual Style
+---
 
-PS1 / early low-poly aesthetic: flat shading, no textures, polygon color and shape only, exponential fog.
+## Demo
 
-## Biome Progression
+**[▶ Open Serene River Stream](https://hiroshikuze.github.io/newapp2026-river-rafting/)**
 
-| Time | Biome | Character |
-|------|-------|-----------|
-| 0 min | Mountain source | Narrow river, steep dark banks |
-| 15 min | Forest | Wider river, tall green banks |
-| 30 min | Valley | Open, rolling hills |
-| 45 min | Plains | Flat terrain, wide river |
-| 60 min | Sea | Open water, minimal banks |
+---
 
-Biome properties (river width, bank height, colors, fog density) are linearly interpolated between keyframes.
+## Overview / 概要
 
-## Architecture
+**EN:** A real-time ambient experience that lasts exactly one hour — the clock on your wall determines where you are on the river. Open it at :00 and you start at the mountain source; by :60 you reach the open sea.
 
-```
-src/
-  main.ts              Entry point — renderer, render loop, orchestration
-  utils/rng.ts         Mulberry32 seeded PRNG
-  terrain/
-    biomes.ts          Biome keyframes + interpolation (0–60 min)
-    Chunk.ts           One terrain segment: river + 2 banks, with dispose()
-    ChunkManager.ts    Spawns chunks 6 ahead, culls 2+ behind — all with .dispose()
-  systems/
-    Lighting.ts        DirectionalLight sun position driven by real wall-clock time
-    Audio.ts           AudioContext white-noise river sound stub
-  ui/
-    Controls.ts        Clock display toggle + sound ON/OFF
-```
+**JA:** 壁掛け時計の現在時刻と連動して、山の源流から海まで1時間かけて川を下るアンビエント3Dアプリです。毎時0分に源流から出発し、毎時60分ちょうどに海に到達します。
 
-**Chunk system:** camera travels −Z at 10 units/sec. Each chunk is 200 units long. ChunkManager keeps indices `[currentChunk−2, currentChunk+6]` alive; everything outside is `.dispose()`d (geometry + material). Biome for a chunk is computed from `(chunkIndex × chunkLength / speed) / 60` minutes.
+---
 
-**Lighting:** `DirectionalLight` elevation is `sin((fractionalDay − 0.25) × π)`. AmbientLight is kept at ≥ 0.6 intensity so night scenes remain visible. Dawn/dusk shifts sun color toward orange.
+## Features
 
-## Development
+- **Clock-synced journey** — position on the river is driven by real wall-clock minutes/seconds
+- **5 biomes** — Mountain → Forest → Valley → Plains → Sea with smooth interpolation
+- **Geometric river meander** — fBm-based sinuous river path; camera yaw tracks the bend
+- **PS1-style wave texture** — pixelated scrolling water surface, no GPU shaders required
+- **Seasonal sky** — sky colour and cloud type change with the real-world season
+- **Dynamic lighting** — sun position matches time of day; night scenes fade to deep blue
+- **Ambient sound** — optional river noise (Web Audio API)
+- **What's New modal** — shows release notes on first visit after an update
+
+---
+
+## Local Setup
 
 ```bash
+git clone https://github.com/hiroshikuze/newapp2026-river-rafting.git
+cd newapp2026-river-rafting
 npm install
-npm run dev        # localhost:5173
-npm run build      # outputs to dist/
+npm run dev        # http://localhost:5173/newapp2026-river-rafting/
+```
+
+Other commands:
+
+```bash
+npm run build      # production build → dist/
+npm run preview    # preview the production build locally
 npm run typecheck  # tsc --noEmit
 ```
+
+---
+
+## Tech Stack
+
+| Layer | Library / Tool |
+|-------|---------------|
+| 3D rendering | [Three.js](https://threejs.org/) v0.170 |
+| Language | TypeScript 5 (strict) |
+| Bundler | Vite 6 |
+| Hosting | GitHub Pages (via GitHub Actions) |
+
+---
 
 ## Deployment
 
 Push to `main` → GitHub Actions builds with Vite and deploys `dist/` to GitHub Pages automatically.
-Enable GitHub Pages in repo Settings → Pages → Source: GitHub Actions.
+
+Enable GitHub Pages in repo **Settings → Pages → Source: GitHub Actions** (first time only).
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE).
+
+---
+
+## Author
+
+[@hiroshikuze](https://github.com/hiroshikuze)

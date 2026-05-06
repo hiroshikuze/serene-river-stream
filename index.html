@@ -3,7 +3,36 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Infinite River Journey</title>
+
+    <!-- Primary meta -->
+    <title>Serene River Stream</title>
+    <meta name="description"
+          content="A 1-hour ambient 3D river journey — ride from mountain headwaters to the open sea, synchronized with your real wall-clock. Built with Three.js." />
+    <meta name="theme-color" content="#6a8898" />
+
+    <!-- Open Graph -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:title"       content="Serene River Stream" />
+    <meta property="og:description" content="A 1-hour ambient 3D river journey synchronized with your wall-clock." />
+    <meta property="og:url"         content="https://hiroshikuze.github.io/newapp2026-river-rafting/" />
+    <!-- og:image を追加する場合は以下を有効化 -->
+    <!-- <meta property="og:image" content="https://hiroshikuze.github.io/newapp2026-river-rafting/ogp.png" /> -->
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content="Serene River Stream" />
+    <meta name="twitter:description" content="A 1-hour ambient 3D river journey synchronized with your wall-clock." />
+    <meta name="twitter:image"       content="https://hiroshikuze.github.io/newapp2026-river-rafting/ogp.png" />
+
+    <!-- favicon — replace public/favicon.ico with your own -->
+    <link rel="icon" href="/newapp2026-river-rafting/favicon.ico" />
+
+    <!-- OG image — replace public/ogp.png (1200×630) with your own -->
+    <meta property="og:image" content="https://hiroshikuze.github.io/newapp2026-river-rafting/ogp.png" />
+
+    <!-- Umami analytics — replace YOUR_SITE_ID after creating a site in Umami dashboard -->
+    <!-- <script defer src="https://analytics.umami.is/script.js" data-website-id="YOUR_SITE_ID"></script> -->
+
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { overflow: hidden; background: #000; }
@@ -52,6 +81,22 @@
       .btn:hover { background: rgba(255, 255, 255, 0.12); }
       .btn.off { color: #666; border-color: #333; }
 
+      /* GitHub link — same visual weight as .btn */
+      #github-link {
+        pointer-events: all;
+        display: block;
+        background: rgba(0, 0, 0, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        color: rgba(221, 216, 200, 0.65);
+        padding: 3px 10px;
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        letter-spacing: 1px;
+        text-decoration: none;
+        transition: background 0.1s;
+      }
+      #github-link:hover { background: rgba(255, 255, 255, 0.12); }
+
       #journey {
         position: fixed;
         bottom: 14px;
@@ -63,6 +108,67 @@
         letter-spacing: 2px;
         pointer-events: none;
       }
+
+      /* ── What's New modal ─────────────────────────────────── */
+      #wn-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.72);
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+      }
+      #wn-overlay.open { display: flex; }
+
+      #wn-modal {
+        background: rgba(10, 18, 26, 0.96);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        padding: 28px 32px 24px;
+        max-width: 420px;
+        width: 90%;
+        font-family: 'Courier New', monospace;
+        color: #ddd8c8;
+      }
+
+      #wn-modal h2 {
+        font-size: 15px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+      }
+
+      #wn-date {
+        font-size: 11px;
+        color: rgba(221, 216, 200, 0.45);
+        letter-spacing: 2px;
+        margin-bottom: 18px;
+      }
+
+      #wn-list {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      #wn-list li::before {
+        content: '▸ ';
+        color: rgba(221, 216, 200, 0.45);
+      }
+
+      #wn-list li {
+        font-size: 12px;
+        line-height: 1.5;
+        letter-spacing: 0.5px;
+      }
+
+      #wn-close {
+        display: block;
+        width: 100%;
+      }
     </style>
   </head>
   <body>
@@ -72,8 +178,25 @@
       <button class="btn" id="sound-btn">SOUND ♪</button>
       <div id="fps">-- fps</div>
       <button class="btn" id="fps-btn">FPS</button>
+      <a id="github-link"
+         href="https://github.com/hiroshikuze/newapp2026-river-rafting"
+         target="_blank"
+         rel="noopener">README ↗</a>
+      <button class="btn" id="wn-btn">WHAT'S NEW</button>
     </div>
+
     <div id="journey">SOURCE</div>
+
+    <!-- What's New modal -->
+    <div id="wn-overlay">
+      <div id="wn-modal">
+        <h2>What's New</h2>
+        <div id="wn-date"></div>
+        <ul id="wn-list"></ul>
+        <button class="btn" id="wn-close">CLOSE</button>
+      </div>
+    </div>
+
     <div id="whiteout" style="position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>

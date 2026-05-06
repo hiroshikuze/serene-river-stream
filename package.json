@@ -1,6 +1,7 @@
 {
-  "name": "newapp2026-river-rafting",
-  "version": "0.1.0",
+  "name": "serene-river-stream",
+  "version": "1.0.0",
+  "description": "A 1-hour ambient 3D river journey synchronized with your wall-clock",
   "private": true,
   "type": "module",
   "scripts": {
