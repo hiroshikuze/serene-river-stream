@@ -4,13 +4,12 @@ A 1-hour ambient 3D river journey — ride from mountain headwaters to the open 
 Built with Vanilla TypeScript + Three.js + Vite.
 
 [![GitHub Stars](https://img.shields.io/github/stars/hiroshikuze/serene-river-stream?style=for-the-badge&logo=github&logoColor=white&color=gold&label=⭐%20Stars)](https://github.com/hiroshikuze/serene-river-stream/stargazers)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
 ---
 
 ## Demo
 
-**[▶ Open Serene River Stream](https://hiroshikuze.github.io/serene-river-stream/)**
+[![▶ Open Serene River Stream Demo](https://img.shields.io/badge/▶%20Serene%20River%20Stream-Demo%20Open-22c55e?style=for-the-badge&logo=html5&logoColor=white)](https://hiroshikuze.github.io/serene-river-stream/)
 
 ---
 
@@ -54,6 +53,14 @@ npm run typecheck  # tsc --noEmit
 
 ---
 
+## Deployment
+
+Push to `main` → GitHub Actions builds with Vite and deploys `dist/` to GitHub Pages automatically.
+
+Enable GitHub Pages in repo **Settings → Pages → Source: GitHub Actions** (first time only).
+
+---
+
 ## Tech Stack
 
 | Layer | Library / Tool |
@@ -65,20 +72,23 @@ npm run typecheck  # tsc --noEmit
 
 ---
 
-## Deployment
-
-Push to `main` → GitHub Actions builds with Vite and deploys `dist/` to GitHub Pages automatically.
-
-Enable GitHub Pages in repo **Settings → Pages → Source: GitHub Actions** (first time only).
-
----
-
 ## License
 
-MIT — see [LICENSE](LICENSE).
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
 ---
 
 ## Author
 
 [@hiroshikuze](https://github.com/hiroshikuze)
+
+---
+
+## 💖 Support my work
+
+If you'd like to support my projects, please consider becoming a sponsor!
+
+[![GitHub Stars](https://img.shields.io/github/stars/hiroshikuze/serene-river-stream?style=for-the-badge&logo=github&logoColor=white&color=gold&label=⭐%20Stars)](https://github.com/hiroshikuze/serene-river-stream/stargazers)
+
+[![GitHub Sponsors](https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?style=for-the-badge&logo=github-sponsors)](https://github.com/sponsors/hiroshikuze)
+[![アマゾンの欲しいものリスト (Amazon.co.jp wish list)](https://img.shields.io/badge/Amazon-Wishlist-orange?style=for-the-badge&logo=amazon)](https://www.amazon.jp/hz/wishlist/ls/5BAWD0LZ89V9?ref_=wl_share)
