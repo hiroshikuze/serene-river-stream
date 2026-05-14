@@ -74,3 +74,4 @@ Once the project is scaffolded, update the following files with specifics:
 - Testing policy: `.claude/rules/testing.md`
 - Git workflow: `.claude/rules/git.md`
 - Past mistake log: `.claude/revision_log.md`
+- Commit skill: `.claude/commands/commit.md` (invoke with `/commit`)
