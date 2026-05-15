@@ -2,6 +2,19 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Language
+
+Respond in Japanese for all user-facing explanations, instructions, verification steps, and deployment notes, unless the user explicitly writes in English.
+
+## Asset Handling
+
+Never read or push binary image files (> 50 KB) as base64 via the GitHub MCP API.
+
+- Before any image push: optimize first (`sharp` or `pngquant`) to reduce under 50 KB.
+- Use `git` CLI (`git add / commit / push`) for all binary asset commits — not the MCP file API.
+- Always confirm the asset file exists on disk before attempting any push.
+- If an image exceeds 100 KB after optimization, stop and ask the user to supply a smaller source file.
+
 ## Session Start
 
 Read `.claude/revision_log.md` before starting any work to internalize past mistake patterns.
@@ -61,3 +74,4 @@ Once the project is scaffolded, update the following files with specifics:
 - Testing policy: `.claude/rules/testing.md`
 - Git workflow: `.claude/rules/git.md`
 - Past mistake log: `.claude/revision_log.md`
+- Commit skill: `.claude/commands/commit.md` (invoke with `/commit`)

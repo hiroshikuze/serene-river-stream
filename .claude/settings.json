@@ -1,3 +1,15 @@
 {
-  "hooks": {}
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /home/user/newapp2026-river-rafting && node_modules/.bin/tsc --noEmit 2>&1 | head -30 || true"
+          }
+        ]
+      }
+    ]
+  }
 }
